@@ -1,6 +1,6 @@
 from discord import app_commands, Interaction, Object
-from src.classes import Custom_Command
-from src.consts import Ids
+from src.utils.classes import Custom_Command
+from src.utils.consts import Ids
 
 
 
@@ -32,4 +32,4 @@ class Ping(Custom_Command):
 
 async def setup(bot):
   '''Cog setup'''
-  await bot.add_cog(Ping(bot), guilds=[Object(id=Ids.guild_main)])
+  await bot.add_cog(Ping(bot), guilds=[Object(id=Ids.Guilds.guild_main)])
