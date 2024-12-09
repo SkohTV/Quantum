@@ -4,5 +4,5 @@ indent-width = 2
 
 [tool.pyright]
 venvPath = './'
-venv = '_venv'
+venv = '.venv'
 reportOptionalMemberAccess = false

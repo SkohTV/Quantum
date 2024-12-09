@@ -1,27 +1,21 @@
-from discord import app_commands, Interaction, Object
+from discord.ext import commands
+from discord import app_commands, Interaction
 from src.utils.classes import Custom_Command
-from src.utils.consts import Ids
+from src.utils.consts import IDS
 
 
 
 
-class Ping(Custom_Command):
-  # Command decorator
+class MyCommand(Custom_Command):
+  name = 'ping'
+
+
   @app_commands.command(
-    name='ping',
+    name=name,
     description='Renvoi le délai de Quantum entre les messages et réponses'
   )
+  async def fn(self, interaction: Interaction):
 
-  # Command definition
-  async def ping(self, interaction: Interaction):
-
-    # Permissions
-    is_allowed, err_msg = (True, '')
-    if not is_allowed:
-      await interaction.response.send_message(err_msg, ephemeral=True)
-      return
-
-    # Core command code
     await interaction.response.send_message(content='⌛ Loading...')
     websockets_latency = self.bot.ws.latency
 
@@ -32,4 +26,4 @@ class Ping(Custom_Command):
 
 async def setup(bot):
   '''Cog setup'''
-  await bot.add_cog(Ping(bot), guilds=[Object(id=Ids.Guilds.guild_main)])
+  await bot.add_cog(MyCommand(bot), guilds=[IDS.GUILDS.guild_main])

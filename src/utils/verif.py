@@ -1,5 +1,6 @@
+from typing import Callable
 from discord import Interaction
-from src.utils.consts import Ids
+from src.utils.consts import IDS
 
 
 
@@ -7,16 +8,20 @@ from src.utils.consts import Ids
 
 
 
-def is_allowed(name: str, msg: Interaction) -> tuple[bool, str]:
-  match name.lower():
-    case 'ping':
-      if not in_valid_channel([Ids.TextChannels.coding_commands], msg):
-        return (False, 'Cannot post message in this channel')
-      
+# def is_allowed(name: str, msg: Interaction) -> tuple[bool, str]:
+#   match name.lower():
+#     case 'ping':
+#       if not in_valid_channel([IDS.TEXT_CHANNELS.coding_commands], msg):
+#         return (False, 'Cannot post message in this channel')
+#       
+#
+#
+#   # Return true if verification is successfull (and empty error message)
+#   return (True, '')
 
 
-  # Return true if verification is successfull (and empty error message)
-  return (True, '')
+def is_bot_channel(self, fn: Callable):
+  ...
 
 
 
