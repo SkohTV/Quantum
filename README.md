@@ -11,6 +11,14 @@
 
 /raidmode [on/off]
 
+/clusteradd [username]
+/clusterdel [@username]
+/clusterup [username] {parameters}
+/clusterlist
+/clusterinfo [username]
+
+/embed [channel] [parameters]
+
 ```
 
 ### Events
