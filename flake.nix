@@ -9,10 +9,10 @@ let
   pkgs = nixpkgs.legacyPackages.${system};
 
   inherit (poetry2nix.lib.mkPoetry2Nix { inherit pkgs; }) mkPoetryApplication mkPoetryEnv;
-  pythonApp = mkPoetryApplication { };
-  pythonEnv = mkPoetryEnv { };
-  # pythonApp = mkPoetryApplication { projectDir = ./.; };
-  # pythonEnv = mkPoetryEnv { projectDir = ./.; };
+  # pythonApp = mkPoetryApplication { };
+  # pythonEnv = mkPoetryEnv { };
+  pythonApp = mkPoetryApplication { projectDir = ./.; };
+  pythonEnv = mkPoetryEnv { projectDir = ./.; };
 
 in {
 

@@ -1,12 +1,10 @@
-from src.discord import DiscordBot
-from discord import c
+from discord import C
 
 
 
 def main() -> None:
   '''Entrypoint'''
-  discord_bot = DiscordBot()
-  discord_bot.run()
+  ...
 
 
 if __name__ == '__main__':
