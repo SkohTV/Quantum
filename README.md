@@ -3,7 +3,7 @@
 ### Commands
 
 ```
-/ping
+/ping ✔️
 
 /raidmode [on/off]
 
@@ -13,7 +13,7 @@
 /clusterlist
 /clusterinfo [username]
 
-/embed [channel] [parameters]
+/embed [channel] [parameters] ✔️
 
 /monitorwebsite [url]
 
