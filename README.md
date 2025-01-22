@@ -14,6 +14,9 @@
 /clusterinfo [username]
 
 /embed [channel] [parameters]
+
+/monitorwebsite [url]
+
 ```
 
 ### Events
