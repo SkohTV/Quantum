@@ -1,13 +1,33 @@
 mod commands;
 mod utils;
-mod db;
 
 use dotenv::dotenv;
 use poise::serenity_prelude as serenity;
 
-struct Data {}
-type Error = Box<dyn std::error::Error + Send + Sync>;
-type Context<'a> = poise::Context<'a, Data, Error>;
+
+
+async fn on_error(error: poise::FrameworkError<'_, utils::Data, utils::Error>) {
+
+    match error {
+        poise::FrameworkError::Setup { error, .. } => panic!("Failed to start bot: {:?}", error),
+        poise::FrameworkError::Command { error, ctx, .. } => {
+            let msg = format!(
+                "{} in <#{}>\n➜ `/{}`\n\n```{}```",
+                ctx.author(),
+                ctx.channel_id(),
+                ctx.command().qualified_name,
+                error
+            );
+
+            utils::logging::log_to_discord(&ctx, msg, utils::logging::LogRole::Error).await;
+        },
+        error => {
+            if let Err(e) = poise::builtins::on_error(error).await {
+                println!("Error while handling error: {}", e)
+            }
+        }
+    }
+}
 
 
 
@@ -31,24 +51,21 @@ async fn main() {
             commands::embed::cmd(),
         ],
 
-        pre_command: |ctx| {
+        post_command: |ctx| {
             Box::pin(async move {
 
-                let embed = utils::default::embed()
-                    .timestamp(serenity::Timestamp::now())
-                    .description(format!(
-                        "{} in <#{}>\n➜ `{}`",
-                        ctx.author(),
-                        ctx.channel_id(),
-                        ctx.command().qualified_name,
-                    ));
+                let msg = format!(
+                    "{} in <#{}>\n➜ `/{}`\nSuccess",
+                    ctx.author(),
+                    ctx.channel_id(),
+                    ctx.command().qualified_name,
+                );
 
-                let msg = serenity::CreateMessage::default()
-                    .embed(embed);
-
-                let _ = serenity::ChannelId::from(utils::ids::LOG_CHANNEL).send_message(ctx, msg).await;
+                utils::logging::log_to_discord(&ctx, msg, utils::logging::LogRole::Success).await;
             })
         },
+
+        on_error: |err| Box::pin(on_error(err)),
 
 
 
@@ -61,7 +78,7 @@ async fn main() {
         .setup(|ctx, _ready, framework| {
             Box::pin(async move {
                 poise::builtins::register_globally(ctx, &framework.options().commands).await?;
-                Ok(Data {})
+                Ok(utils::Data {})
             })
         })
         .build();

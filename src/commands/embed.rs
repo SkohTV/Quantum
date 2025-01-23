@@ -1,4 +1,4 @@
-use crate::{Context, Error};
+use crate::utils::{Context, Error};
 use poise::serenity_prelude as serenity;
 
 
@@ -18,7 +18,14 @@ pub async fn cmd(
     let msg = serenity::CreateMessage::default()
         .embed(embed.into());
 
-    let _ = channel.send_message(ctx, msg).await?;
+    channel.send_message(ctx, msg).await?;
+
+    ctx.send(poise::CreateReply::default()
+        .content("Successfully sent embed")
+        .attachment(serenity::CreateAttachment::bytes(
+            data, "data.txt"
+        ))
+    ).await?;
 
     Ok(())
 }
