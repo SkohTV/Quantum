@@ -1,9 +1,11 @@
 pub mod ids;
 pub mod default;
 pub mod logging;
+pub mod framework;
+pub mod app;
+pub mod commands;
 
 
-pub const VERSION: &str = "5.0.0-β";
 
 
 pub struct Data {}

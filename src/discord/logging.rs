@@ -1,4 +1,4 @@
-use crate::utils;
+use crate::discord;
 use poise::serenity_prelude as serenity;
 
 pub enum LogRole {
@@ -9,7 +9,7 @@ pub enum LogRole {
 
 
 pub async fn log_to_discord(
-    ctx: &crate::utils::Context<'_>,
+    ctx: &crate::discord::Context<'_>,
     log_message: String,
     role: LogRole, 
 ) -> () {
@@ -20,7 +20,7 @@ pub async fn log_to_discord(
         // LogRole::Info => serenity::Colour::BLURPLE,
     };
 
-    let embed = utils::default::embed()
+    let embed = discord::default::embed()
         .timestamp(serenity::Timestamp::now())
         .description(log_message)
         .color(color);
@@ -28,5 +28,5 @@ pub async fn log_to_discord(
     let msg = serenity::CreateMessage::default()
         .embed(embed);
 
-    let _ = serenity::ChannelId::from(utils::ids::LOG_CHANNEL).send_message(ctx, msg).await;
+    let _ = serenity::ChannelId::from(discord::ids::LOG_CHANNEL).send_message(ctx, msg).await;
 }

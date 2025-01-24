@@ -1,5 +1,4 @@
-
-use crate::utils;
+use crate::consts;
 use poise::serenity_prelude as serenity;
 
 
@@ -10,7 +9,7 @@ pub fn embed() -> serenity::CreateEmbed {
         .icon_url("https://raw.githubusercontent.com/SkohTV/SkohTV/refs/heads/main/images/projects/quantum.png"); // need to update
     
     let footer = serenity::CreateEmbedFooter::new(format!(
-        "Running on version {}", utils::VERSION
+        "Running on version {}", consts::VERSION
     ));
 
     serenity::CreateEmbed::default()

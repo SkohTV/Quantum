@@ -1,4 +1,4 @@
-use crate::utils::{Context, Error};
+use crate::discord::{Context, Error};
 use poise::serenity_prelude as serenity;
 
 
