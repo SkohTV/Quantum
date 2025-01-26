@@ -4,9 +4,17 @@ use poise::serenity_prelude as serenity;
 
 
 pub fn embed() -> serenity::CreateEmbed {
-    let author = serenity::CreateEmbedAuthor::new("Quantum")
+    
+    let (name, pfp) = match consts::MODE {
+        "dev" => ("Quantum Dev", "https://cdn.discordapp.com/avatars/1042497340352770142/17aa48868280edeb5edda826a0e49e48?size=1024"),
+        "release" => ("Quantum", "https://cdn.discordapp.com/avatars/1033842126334742659/5235b0f44210455555f1685cac3580b9?size=1024"),
+        err => panic!("Incorrect bot mode (not 'release' or 'dev') => {}", err)
+    };
+
+
+    let author = serenity::CreateEmbedAuthor::new(name)
         .url("https://github.com/SkohTV/quantum/")
-        .icon_url("https://raw.githubusercontent.com/SkohTV/SkohTV/refs/heads/main/images/projects/quantum.png"); // need to update
+        .icon_url(pfp);
     
     let footer = serenity::CreateEmbedFooter::new(format!(
         "Running on version {}", consts::VERSION

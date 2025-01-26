@@ -1,8 +1,6 @@
 use poise::serenity_prelude as serenity;
 use crate::consts;
-use crate::discord::{commands, framework, Data};
-
-
+use crate::discord::{commands, framework, Data, ids};
 
 
 
@@ -19,6 +17,9 @@ pub async fn app() {
         commands: vec![
             commands::ping::cmd(),
             commands::embed::cmd(),
+            commands::clusteradd::cmd(),
+            commands::clusterdel::cmd(),
+            commands::clusterlist::cmd(),
         ],
 
         post_command: |ctx| Box::pin(framework::post_command(ctx)),
@@ -32,8 +33,21 @@ pub async fn app() {
         .options(options)
         .setup(|ctx, _ready, framework| {
             Box::pin(async move {
-                poise::builtins::register_globally(ctx, &framework.options().commands).await?;
-                Ok(Data {})
+                let main_guild = serenity::GuildId::from(ids::GUILD_ID);
+
+                // poise::builtins::register_globally(ctx, &framework.options().commands).await?;
+
+                for cmd in main_guild.get_commands(ctx).await.unwrap() {
+                    main_guild.delete_command(ctx, cmd.id).await.unwrap();
+                }
+
+                poise::builtins::register_in_guild(
+                    ctx,
+                    &framework.options().commands,
+                    main_guild
+                ).await?;
+
+                Ok(Data { })
             })
         })
         .build();

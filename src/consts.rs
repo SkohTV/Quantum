@@ -2,9 +2,9 @@ use const_format::concatcp;
 
 
 
-const NUMBER: &str = "5.1.0";
+const NUMBER: &str = "5.1";
 
-const MODE: &str = "dev";
+pub const MODE: &str = "dev";
 // pub const MODE = "release";
 
 
