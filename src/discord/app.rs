@@ -1,12 +1,12 @@
 use poise::serenity_prelude as serenity;
 use crate::consts;
-use crate::discord::{commands, framework, Data, ids};
+use crate::discord::{commands, framework, Data, ids, Handler};
 
 
 
 pub async fn app() {
     let token = std::env::var("DISCORD_TOKEN").expect("missing DISCORD_TOKEN");
-    let intents = serenity::GatewayIntents::non_privileged();
+    let intents = serenity::GatewayIntents::GUILD_MEMBERS;
 
     let status = serenity::OnlineStatus::Online;
     let activity = serenity::ActivityData::playing(consts::VERSION);
@@ -57,7 +57,12 @@ pub async fn app() {
         .framework(framework)
         .status(status)
         .activity(activity)
+        .event_handler(Handler)
         .await;
 
-    client.unwrap().start().await.unwrap();
+    client
+        .unwrap()
+        .start()
+        .await
+        .unwrap();
 }

@@ -4,12 +4,12 @@ use poise::serenity_prelude as serenity;
 pub enum LogRole {
     Error,
     Success,
-    // Info,
+    Info,
 }
 
 
 pub async fn log_to_discord(
-    ctx: &crate::discord::Context<'_>,
+    ctx: impl serenity::CacheHttp + '_,
     log_message: String,
     role: LogRole, 
 ) -> () {
@@ -17,7 +17,7 @@ pub async fn log_to_discord(
     let color = match role {
         LogRole::Error => serenity::model::Color::RED,
         LogRole::Success => serenity::model::Color::FOOYOO,
-        // LogRole::Info => serenity::Colour::BLURPLE,
+        LogRole::Info => serenity::Colour::BLURPLE,
     };
 
     let embed = discord::default::embed()
