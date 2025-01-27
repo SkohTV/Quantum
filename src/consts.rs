@@ -2,10 +2,11 @@ use const_format::concatcp;
 
 
 
-const NUMBER: &str = "5.1";
+const MAJOR: u8 = 5;
+const MINOR: u8 = 2;
 
 pub const MODE: &str = "dev";
 // pub const MODE = "release";
 
 
-pub const VERSION: &str = concatcp!(NUMBER, "-", MODE);
+pub const VERSION: &str = concatcp!(MAJOR, ".", MINOR, "-", MODE);
