@@ -18,4 +18,6 @@ WORKDIR /quantum
 COPY .env .
 COPY --from=builder /quantum/target/release/quantum /quantum/bin
 
+RUN apt-get update && apt-get install -y ca-certificates
+
 ENTRYPOINT ["/quantum/bin"]
