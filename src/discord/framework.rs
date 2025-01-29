@@ -1,8 +1,10 @@
-use crate::discord;
+use poise::serenity_prelude as serenity;
+use crate::discord::{Data, Context, Error, logging, ids};
+use crate::consts;
 
 
 
-pub async fn on_error(error: poise::FrameworkError<'_, discord::Data, discord::Error>) {
+pub async fn on_error(error: poise::FrameworkError<'_, Data, Error>) {
 
     match error {
         poise::FrameworkError::Setup { error, .. } => panic!("Failed to start bot: {:?}", error),
@@ -15,7 +17,7 @@ pub async fn on_error(error: poise::FrameworkError<'_, discord::Data, discord::E
                 error
             );
 
-            discord::logging::log_to_discord(&ctx, msg, discord::logging::LogRole::Error).await;
+            logging::log_to_discord(&ctx, msg, logging::LogRole::Error).await;
             let _ = ctx.send(poise::CreateReply::default()
                 .content(format!("An error happened\n```{}```", error))
                 .ephemeral(true)
@@ -31,7 +33,7 @@ pub async fn on_error(error: poise::FrameworkError<'_, discord::Data, discord::E
 
 
 
-pub async fn post_command(ctx: discord::Context<'_>) {
+pub async fn post_command(ctx: Context<'_>) {
     let msg = format!(
         "{} in <#{}>\n➜ `/{}`\nSuccess",
         ctx.author(),
@@ -39,5 +41,40 @@ pub async fn post_command(ctx: discord::Context<'_>) {
         ctx.command().qualified_name,
     );
 
-    discord::logging::log_to_discord(&ctx, msg, discord::logging::LogRole::Success).await;
+    logging::log_to_discord(&ctx, msg, logging::LogRole::Success).await;
+}
+
+
+
+pub async fn command_check(ctx: Context<'_>) -> Result<bool, Box<dyn std::error::Error + Send + Sync>> {
+    // Channel check
+    let channels = match consts::MODE {
+        "dev" => vec!(ids::PRIVATE_BOT_CHANNEL),
+        "release" => vec!(ids::PUBLIC_BOT_CHANNEL, ids::PRIVATE_BOT_CHANNEL),
+        _ => panic!("Invalid MODE"),
+    };
+
+    let channels = channels
+        .iter()
+        .map(|x| serenity::ChannelId::from(x.clone()))
+        .collect::<Vec<_>>();
+
+    if !channels.contains(&ctx.channel_id()) {
+
+        let msg = poise::CreateReply::default()
+            .content(format!("You can't use commands here, try in <#{}>", ids::PUBLIC_BOT_CHANNEL))
+            .ephemeral(true);
+
+        ctx.send(msg).await?;
+
+        logging::log_to_discord(
+            ctx,
+            format!("{} tried to run `/{}` in <#{}>", ctx.author(), ctx.command().name, ctx.channel_id()),
+            logging::LogRole::Error,
+        ).await;
+
+        return Ok(false);
+    }
+
+    Ok(true)
 }

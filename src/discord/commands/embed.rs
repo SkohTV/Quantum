@@ -7,6 +7,7 @@ use poise::serenity_prelude as serenity;
 #[poise::command(
     slash_command,
     rename="embed",
+    default_member_permissions="ADMINISTRATOR",
 )]
 pub async fn cmd(
     ctx: Context<'_>,
@@ -14,18 +15,22 @@ pub async fn cmd(
     #[description = "JSON embed data"] data: String
 ) -> Result<(), Error> {
 
+    let text = format!("⌛ Loading...");
+    let response = ctx.say(text).await?;
+
     let embed: serenity::Embed = serde_json::from_str(data.as_str())?;
     let msg = serenity::CreateMessage::default()
         .embed(embed.into());
 
     channel.send_message(ctx, msg).await?;
 
-    ctx.send(poise::CreateReply::default()
+    let msg = poise::CreateReply::default()
         .content("Successfully sent embed")
         .attachment(serenity::CreateAttachment::bytes(
             data, "data.txt"
-        ))
-    ).await?;
+        ));
+
+    response.edit(ctx, msg).await?;
 
     Ok(())
 }

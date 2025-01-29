@@ -5,8 +5,11 @@ use crate::discord::{commands, framework, Data, ids, Handler};
 
 
 pub async fn app() {
-    let token = std::env::var("DISCORD_TOKEN").expect("missing DISCORD_TOKEN");
-    let intents = serenity::GatewayIntents::GUILD_MEMBERS;
+    let token = std::env::var(format!("DISCORD_TOKEN_{}", consts::MODE.to_uppercase()))
+        .expect("missing or wrong DISCORD_TOKEN_???");
+
+    let intents = serenity::GatewayIntents::GUILD_MEMBERS |
+        serenity::GatewayIntents::GUILDS;
 
     let status = serenity::OnlineStatus::Online;
     let activity = serenity::ActivityData::playing(consts::VERSION);
@@ -20,10 +23,12 @@ pub async fn app() {
             commands::clusteradd::cmd(),
             commands::clusterdel::cmd(),
             commands::clusterlist::cmd(),
+            commands::clusterupdate::cmd(),
         ],
 
         post_command: |ctx| Box::pin(framework::post_command(ctx)),
         on_error: |err| Box::pin(framework::on_error(err)),
+        command_check: Some(|ctx| Box::pin(framework::command_check(ctx))),
 
         ..Default::default()
     };
@@ -37,9 +42,9 @@ pub async fn app() {
 
                 // poise::builtins::register_globally(ctx, &framework.options().commands).await?;
 
-                for cmd in main_guild.get_commands(ctx).await.unwrap() {
-                    main_guild.delete_command(ctx, cmd.id).await.unwrap();
-                }
+                // for cmd in main_guild.get_commands(ctx).await.unwrap() {
+                //     main_guild.delete_command(ctx, cmd.id).await.unwrap();
+                // }
 
                 poise::builtins::register_in_guild(
                     ctx,

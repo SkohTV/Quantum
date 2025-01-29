@@ -3,7 +3,7 @@ use const_format::concatcp;
 
 
 const MAJOR: u8 = 5;
-const MINOR: u8 = 2;
+const MINOR: u8 = 3;
 
 pub const MODE: &str = "dev";
 // pub const MODE: &str = "release";

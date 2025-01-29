@@ -15,9 +15,8 @@ pub async fn cmd(ctx: Context<'_>) -> Result<(), Error> {
     let response = ctx.say(text).await?;
     let elapsed = start.elapsed();
 
-    let text =  format!("Discord Websocket ⇒ `{}ms`", elapsed.as_millis());
     let msg = poise::CreateReply::default()
-        .content(text);
+        .content(format!("Discord Websocket ⇒ `{}ms`", elapsed.as_millis()));
 
     response.edit(ctx, msg).await?;
 

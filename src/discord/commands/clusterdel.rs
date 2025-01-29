@@ -8,13 +8,16 @@ use crate::database;
 #[poise::command(
     slash_command,
     rename="clusterdel",
+    default_member_permissions="ADMINISTRATOR",
 )]
 pub async fn cmd(
     ctx: Context<'_>,
     #[description = "User to remove from cluster"] user: serenity::Member,
 ) -> Result<(), Error> {
 
-    // let con = ctx.data().db.read().await.clone();
+    let text = format!("⌛ Loading...");
+    let response = ctx.say(text).await?;
+
     let con = database::client::start_db().await;
     let userid = user.user.id.to_string();
 
@@ -29,16 +32,21 @@ pub async fn cmd(
             database::requests::remove_user(con.clone(), &userid).await?;
             user.remove_role(ctx, serenity::RoleId::from(ids::CLUSTER_ROLE)).await?;
 
-            ctx.say(format!("Removed {} from cluster !", user)).await?;
+            let msg = poise::CreateReply::default()
+                .content(format!("Removed {} from cluster !", user));
+
+            response.edit(ctx, msg).await?;
+
             return Ok(());
         }
     }
 
 
-    ctx.send(poise::CreateReply::default()
+    let msg = poise::CreateReply::default()
         .content(format!("{} is not in cluster", user))
-        .ephemeral(true)
-    ).await?;
+        .ephemeral(true);
+
+    response.edit(ctx, msg).await?;
 
     Ok(())
 

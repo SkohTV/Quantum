@@ -7,12 +7,15 @@ use crate::database;
 #[poise::command(
     slash_command,
     rename="clusterlist",
+    default_member_permissions="ADMINISTRATOR",
 )]
 pub async fn cmd(
     ctx: Context<'_>,
 ) -> Result<(), Error> {
 
-    // let con = ctx.data().db.read().await.clone();
+    let text = format!("⌛ Loading...");
+    let response = ctx.say(text).await?;
+
     let con = database::client::start_db().await;
     let mut users = database::requests::retrieve_users(con).await.unwrap();
     let mut user_ids: Vec<String> = Vec::new();
@@ -28,12 +31,14 @@ pub async fn cmd(
         .join("\n");
 
     let embed = default::embed()
+        .title("Users in Cluster")
         .description(format!("{}", user_ids));
 
     let msg = poise::CreateReply::default()
+        .content("")
         .embed(embed);
 
-    ctx.send(msg).await?;
+    response.edit(ctx, msg).await?;
 
     Ok(())
 }

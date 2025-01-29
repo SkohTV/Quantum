@@ -8,13 +8,16 @@ use crate::database;
 #[poise::command(
     slash_command,
     rename="clusteradd",
+    default_member_permissions="ADMINISTRATOR",
 )]
 pub async fn cmd(
     ctx: Context<'_>,
     #[description = "User to add to cluster"] user: serenity::Member,
 ) -> Result<(), Error> {
 
-    // let con = ctx.data().db.read().await.clone();
+    let text = format!("⌛ Loading...");
+    let response = ctx.say(text).await?;
+
     let con = database::client::start_db().await;
     let userid = user.user.id.to_string();
 
@@ -26,10 +29,13 @@ pub async fn cmd(
         let val: u32 = val.get(0)?;
 
         if val > 0 {
-            ctx.send(poise::CreateReply::default()
+
+            let msg = poise::CreateReply::default()
                 .content(format!("{} is already in cluster", user))
-                .ephemeral(true)
-            ).await?;
+                .ephemeral(true);
+
+            response.edit(ctx, msg).await?;
+            
 
             return Ok(());
         }
@@ -39,7 +45,10 @@ pub async fn cmd(
     database::requests::add_user(con.clone(), &userid).await?;
     user.add_role(ctx, serenity::RoleId::from(ids::CLUSTER_ROLE)).await?;
 
-    ctx.say(format!("Added {} to cluster !", user)).await?;
+    let msg = poise::CreateReply::default()
+        .content(format!("Added {} to cluster !", user));
+
+    response.edit(ctx, msg).await?;
 
     Ok(())
 
