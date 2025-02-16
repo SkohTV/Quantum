@@ -9,6 +9,13 @@ git clone -b release https://github.com/SkohTV/quantum
 git reset --hard && git pull
 docker kill quantum && docker rm quantum
 docker build . -t quantum && docker run --name=quantum -t quantum -d
+
+
+# Outsoucing build
+docker build . -t quantum && docker save -o quantum.tar quantum
+scp quantum.tar user@address:/path
+ssh user@address
+docker load -i quantum.tar && docker run --name=quantum -t quantum -d
 ```
 
 ---
