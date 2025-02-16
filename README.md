@@ -1,5 +1,16 @@
 # Quantum
 
+## Build
+
+```sh
+# Using branch 'release'
+git clone -b release https://github.com/SkohTV/quantum
+
+git reset --hard && git pull
+docker kill quantum && docker rm quantum
+docker build . -t quantum && docker run --name=quantum -t quantum -d
+```
+
 ---
 
 ### Commands
