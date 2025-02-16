@@ -1,22 +1,17 @@
-use poise::serenity_prelude as serenity;
 use crate::consts;
-use crate::discord::{commands, framework, Data, ids, Handler};
-
-
+use crate::discord::{commands, framework, ids, Data, Handler};
+use poise::serenity_prelude as serenity;
 
 pub async fn app() {
-    let token = std::env::var(format!("DISCORD_TOKEN_{}", consts::MODE.to_uppercase()))
+    let token = std::env::var(format!("DISCORD_TOKEN_{}", consts::mode().to_uppercase()))
         .expect("missing or wrong DISCORD_TOKEN_???");
 
-    let intents = serenity::GatewayIntents::GUILD_MEMBERS |
-        serenity::GatewayIntents::GUILDS;
+    let intents = serenity::GatewayIntents::GUILD_MEMBERS | serenity::GatewayIntents::GUILDS;
 
     let status = serenity::OnlineStatus::Online;
-    let activity = serenity::ActivityData::playing(consts::VERSION);
-
+    let activity = serenity::ActivityData::playing(consts::version());
 
     let options = poise::FrameworkOptions {
-
         commands: vec![
             commands::ping::cmd(),
             commands::embed::cmd(),
@@ -33,7 +28,6 @@ pub async fn app() {
         ..Default::default()
     };
 
-
     let framework = poise::Framework::builder()
         .options(options)
         .setup(|ctx, _ready, framework| {
@@ -46,17 +40,13 @@ pub async fn app() {
                 //     main_guild.delete_command(ctx, cmd.id).await.unwrap();
                 // }
 
-                poise::builtins::register_in_guild(
-                    ctx,
-                    &framework.options().commands,
-                    main_guild
-                ).await?;
+                poise::builtins::register_in_guild(ctx, &framework.options().commands, main_guild)
+                    .await?;
 
-                Ok(Data { })
+                Ok(Data {})
             })
         })
         .build();
-
 
     let client = serenity::ClientBuilder::new(token, intents)
         .framework(framework)
@@ -65,9 +55,5 @@ pub async fn app() {
         .event_handler(Handler)
         .await;
 
-    client
-        .unwrap()
-        .start()
-        .await
-        .unwrap();
+    client.unwrap().start().await.unwrap();
 }

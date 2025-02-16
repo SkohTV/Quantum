@@ -1,9 +1,16 @@
-use const_format::concatcp;
+pub const MAJOR: u8 = 5;
+pub const MINOR: u8 = 4;
 
-const MAJOR: u8 = 5;
-const MINOR: u8 = 4;
+pub fn mode() -> &'static str {
+    let val = std::env::var("RELEASE");
 
-pub const MODE: &str = "dev";
-// pub const MODE: &str = "release";
+    if val.is_ok() && val.unwrap() == "1" {
+        "release"
+    } else {
+        "dev"
+    }
+}
 
-pub const VERSION: &str = concatcp!(MAJOR, ".", MINOR, "-", MODE);
+pub fn version() -> String {
+    format!("{}.{}-{}", MAJOR, MINOR, mode())
+}
